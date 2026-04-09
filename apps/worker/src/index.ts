@@ -8,7 +8,28 @@ import {
   demoMemories,
 } from "@personal-running-coach/coach-core";
 import { sensitiveFieldControls, tableCatalog } from "@personal-running-coach/db";
-import { buildStravaAuthorizationUrl, integrationStatusCards, telegramWebhookGuidance } from "@personal-running-coach/integrations";
+import {
+  buildStravaAuthorizationUrl,
+  getEnvMeta,
+  integrationStatusCards,
+  telegramWebhookGuidance,
+  validateEnv,
+  workerEnvSpecs,
+} from "@personal-running-coach/integrations";
+
+// ---------------------------------------------------------------------------
+// Startup env validation — surfaces all missing vars at once.
+// In production this should be a hard crash; in demo mode we warn and continue.
+// ---------------------------------------------------------------------------
+try {
+  validateEnv(workerEnvSpecs);
+} catch (err) {
+  const error = err as { missingKeys?: string[]; message?: string };
+  console.warn(
+    "[worker] Env validation warning (demo mode — continuing without real secrets):",
+    error.missingKeys ?? error.message,
+  );
+}
 
 const dashboardState = buildCoachDashboardState({
   profile: demoAthleteProfile,
@@ -22,6 +43,7 @@ const threatModel = buildThreatModelSummary();
 
 const output = {
   startup: "personal-running-coach worker booted",
+  envStatus: getEnvMeta(workerEnvSpecs),
   dashboardState,
   integrations: integrationStatusCards,
   stravaAuthPreview: buildStravaAuthorizationUrl({
