@@ -11,6 +11,9 @@
     "dev": "npm run dev:web",
     "dev:web": "npm run dev --workspace @personal-running-coach/web",
     "dev:worker": "npm run dev --workspace @personal-running-coach/worker",
+    "db:generate": "npm run db:generate --workspace @personal-running-coach/db",
+    "db:migrate": "npm run db:migrate --workspace @personal-running-coach/db",
+    "db:studio": "npm run db:studio --workspace @personal-running-coach/db",
     "build": "npm run build --workspaces --if-present --include-workspace-root=false",
     "lint": "npm run lint --workspaces --if-present --include-workspace-root=false",
     "typecheck": "npm run typecheck --workspaces --if-present --include-workspace-root=false",
@@ -21,6 +24,7 @@
     "node": ">=22.0.0"
   },
   "devDependencies": {
+    "drizzle-kit": "^0.31.5",
     "@types/node": "^24.7.2",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"

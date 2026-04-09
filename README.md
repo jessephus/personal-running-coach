@@ -25,7 +25,7 @@ Those deferred items are represented as structured future specs in `packages/coa
 - `apps/web` — Next.js dashboard and API routes
 - `apps/worker` — background job and messaging worker preview
 - `packages/coach-core` — shared coaching domain types, sample data, and deferred feature specs
-- `packages/db` — source-of-truth schema catalog and sensitive-field controls
+- `packages/db` — Postgres schema, migrations, and sensitive-field controls
 - `packages/integrations` — integration helpers for Strava and Telegram
 - `scripts/create-deferred-issues.ts` — GitHub issue generator for deferred MVP items
 
@@ -39,6 +39,7 @@ cp .env.example .env
 
 Important values:
 
+- `DATABASE_URL`
 - `NEXT_PUBLIC_APP_URL`
 - `STRAVA_CLIENT_ID`
 - `STRAVA_CLIENT_SECRET`
@@ -53,6 +54,8 @@ Important values:
 npm install
 npm run dev:web
 npm run dev:worker
+npm run db:generate
+npm run db:migrate
 npm run check
 ```
 
