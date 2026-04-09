@@ -1,6 +1,7 @@
 import {
   buildAthleteStateSummary,
   buildCoachDashboardState,
+  buildGovernanceSummary,
   buildThreatModelSummary,
   demoAthleteProfile,
   demoCompletedWorkouts,
@@ -41,6 +42,7 @@ export function getDashboardData() {
     coachingWorkflows: getCoachingWorkflowPreviews(),
     deferredFeatures: demoDeferredFeatures,
     environmentStatus: getEnvironmentStatus(),
+    governance: buildGovernanceSummary(),
     integrations: integrationStatusCards,
     sensitiveFieldControls,
     tableCatalog,

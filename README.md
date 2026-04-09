@@ -71,3 +71,24 @@ npm run issues:deferred -- jessephus/personal-running-coach
 - Use application-layer encryption for the most sensitive fields such as tokens, injury notes, and message bodies.
 - Keep WhatsApp/Telegram messages concise and avoid sending detailed injury context there.
 - Minimize and pseudonymize model prompts before sending them to frontier-model providers.
+
+## Data governance
+
+The repo includes a code-backed governance layer in `packages/coach-core/src/governance.ts` and `apps/web/src/lib/governance.ts`:
+
+- **Retention policies** — per-data-class retention schedules with cutoff calculation and prunable-table mappings.
+- **Data export** — full athlete data export (decrypted JSON) with optional re-encryption for secure transfer. Tokens are intentionally excluded from exports.
+- **Data deletion** — scoped deletion (`full`, `credentials-only`, `messages-only`, `training-only`, `memories-only`) with audit trail.
+- **Retention pruning** — runnable pruning hook that deletes rows older than their retention cutoff across all prunable tables.
+- **Audit coverage registry** — tracks which auditable actions are implemented and surfaces coverage gaps.
+- **Prompt privacy review** — pattern-based scanner that flags tokens, PII, medical terms, and verbose injury descriptions before they reach model prompts.
+
+### Governance API routes
+
+| Route | Method | Purpose |
+|---|---|---|
+| `/api/governance/status` | GET | Governance posture summary |
+| `/api/governance/export` | POST | Export athlete data |
+| `/api/governance/delete` | POST | Delete athlete data (scoped) |
+| `/api/governance/prune` | POST | Execute retention-based pruning |
+| `/api/governance/audit-summary` | GET | Audit event summary for an athlete |
