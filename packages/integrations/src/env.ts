@@ -65,6 +65,20 @@ export const webEnvSpecs: EnvVarSpec[] = [
     classification: "low",
   },
   {
+    key: "DATABASE_URL",
+    required: true,
+    description:
+      "Primary Postgres connection string for canonical athlete, integration, and import state.",
+    classification: "critical",
+  },
+  {
+    key: "APP_ENCRYPTION_KEY",
+    required: true,
+    description:
+      "Application-layer encryption key used for OAuth tokens, raw import payloads, and signed Strava state.",
+    classification: "critical",
+  },
+  {
     key: "STRAVA_CLIENT_ID",
     required: true,
     description:
@@ -76,6 +90,13 @@ export const webEnvSpecs: EnvVarSpec[] = [
     required: true,
     description:
       "Strava OAuth client secret. Exchanged server-side only; never exposed to the browser.",
+    classification: "critical",
+  },
+  {
+    key: "STRAVA_WEBHOOK_VERIFY_TOKEN",
+    required: false,
+    description:
+      "Optional Strava webhook verification token for subscription setup and inbound webhook validation.",
     classification: "critical",
   },
   {
@@ -113,6 +134,20 @@ export const webEnvSpecs: EnvVarSpec[] = [
  * The worker does not serve HTTP, so Strava OAuth vars are not needed at startup.
  */
 export const workerEnvSpecs: EnvVarSpec[] = [
+  {
+    key: "DATABASE_URL",
+    required: true,
+    description:
+      "Primary Postgres connection string for canonical athlete and integration state.",
+    classification: "critical",
+  },
+  {
+    key: "APP_ENCRYPTION_KEY",
+    required: true,
+    description:
+      "Application-layer encryption key used when the worker reads or writes sensitive integration data.",
+    classification: "critical",
+  },
   {
     key: "TELEGRAM_BOT_TOKEN",
     required: true,
