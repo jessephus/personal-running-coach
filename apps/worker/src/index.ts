@@ -1,5 +1,6 @@
 import {
   buildCoachDashboardState,
+  buildThreatModelSummary,
   demoAthleteProfile,
   demoCompletedWorkouts,
   demoDeferredFeatures,
@@ -17,6 +18,8 @@ const dashboardState = buildCoachDashboardState({
   deferredFeatures: demoDeferredFeatures,
 });
 
+const threatModel = buildThreatModelSummary();
+
 const output = {
   startup: "personal-running-coach worker booted",
   dashboardState,
@@ -29,6 +32,11 @@ const output = {
   telegramWebhookGuidance,
   tableCatalog,
   sensitiveFieldControls,
+  threatModel: {
+    version: threatModel.version,
+    activeRiskCount: threatModel.activeRiskCount,
+    activeMitigationCount: threatModel.activeMitigationCount,
+  },
 };
 
 console.log(JSON.stringify(output, null, 2));

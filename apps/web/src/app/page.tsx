@@ -111,6 +111,168 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="glass-card rounded-[28px] p-7">
+          <SectionHeading
+            eyebrow="Threat model"
+            title="Active threat actors and top risks"
+            description={`${data.threatModel.activeRiskCount} active risks with ${data.threatModel.activeMitigationCount} mitigations · v${data.threatModel.version}`}
+          />
+          <div className="mt-6 grid gap-6 xl:grid-cols-2">
+            <div>
+              <h3 className="mb-4 text-lg font-semibold text-white">Threat actors</h3>
+              <div className="space-y-3">
+                {data.threatModel.threatActors.map((actor) => (
+                  <StatusRow
+                    key={actor.id}
+                    label={actor.name}
+                    detail={actor.description}
+                    status={actor.mvpRelevance === "active" ? "Active" : "Deferred"}
+                    tone={actor.mvpRelevance === "active" ? "amber" : "slate"}
+                  />
+                ))}
+              </div>
+            </div>
+            <div>
+              <h3 className="mb-4 text-lg font-semibold text-white">Top risks</h3>
+              <div className="space-y-3">
+                {data.threatModel.topRisks
+                  .filter((risk) => risk.mvpRelevance === "active")
+                  .map((risk) => (
+                    <div
+                      key={risk.id}
+                      className="rounded-2xl border border-white/10 bg-white/4 p-4"
+                    >
+                      <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                        <p className="font-medium text-white">{risk.title}</p>
+                        <span
+                          className={`shrink-0 rounded-full border px-3 py-1 text-xs uppercase tracking-[0.14em] ${
+                            risk.severity === "critical"
+                              ? "border-red-300/30 bg-red-300/15 text-red-100"
+                              : risk.severity === "high"
+                                ? "border-amber-300/30 bg-amber-300/15 text-amber-100"
+                                : "border-white/10 bg-slate-200/6 text-slate-200"
+                          }`}
+                        >
+                          {risk.severity}
+                        </span>
+                      </div>
+                      <p className="muted mt-2 leading-6">{risk.description}</p>
+                      <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-200">
+                        {risk.mitigations.map((m) => (
+                          <li key={m}>{m}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="grid gap-6 xl:grid-cols-2">
+          <div className="glass-card rounded-[28px] p-7">
+            <SectionHeading
+              eyebrow="Data governance"
+              title="Data classification and lifecycle"
+              description="Every data class has a defined sensitivity level, retention policy, and deletion rule."
+            />
+            <div className="mt-5 space-y-3">
+              {data.threatModel.dataClassifications.map((dc) => (
+                <div
+                  key={dc.id}
+                  className="rounded-2xl border border-white/10 bg-white/4 p-4"
+                >
+                  <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                    <p className="font-medium text-white">{dc.label}</p>
+                    <span
+                      className={`shrink-0 rounded-full border px-3 py-1 text-xs uppercase tracking-[0.14em] ${
+                        dc.sensitivity === "critical"
+                          ? "border-red-300/30 bg-red-300/15 text-red-100"
+                          : dc.sensitivity === "high"
+                            ? "border-amber-300/30 bg-amber-300/15 text-amber-100"
+                            : "border-emerald-300/30 bg-emerald-300/15 text-emerald-100"
+                      }`}
+                    >
+                      {dc.sensitivity}
+                    </span>
+                  </div>
+                  <p className="muted mt-2 leading-6">{dc.description}</p>
+                  <div className="mt-3 grid gap-2 text-sm md:grid-cols-2">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Retention</p>
+                      <p className="mt-1 text-slate-200">{dc.retentionPolicy}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Deletion</p>
+                      <p className="mt-1 text-slate-200">{dc.deletionRule}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="glass-card rounded-[28px] p-7">
+            <SectionHeading
+              eyebrow="Provider guardrails"
+              title="Rules for every external provider"
+              description="Each provider has scoped rules that constrain what data flows through it."
+            />
+            <div className="mt-5 space-y-3">
+              {data.threatModel.providerGuardrails.map((pg) => (
+                <div
+                  key={pg.provider}
+                  className="rounded-2xl border border-white/10 bg-white/4 p-4"
+                >
+                  <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                    <p className="font-medium text-white">{pg.provider}</p>
+                    <span
+                      className={`shrink-0 rounded-full border px-3 py-1 text-xs uppercase tracking-[0.14em] ${
+                        pg.mvpRelevance === "active"
+                          ? "border-teal-300/30 bg-teal-300/15 text-teal-100"
+                          : "border-white/10 bg-slate-200/6 text-slate-200"
+                      }`}
+                    >
+                      {pg.mvpRelevance}
+                    </span>
+                  </div>
+                  <p className="muted mt-2 text-sm">{pg.scope}</p>
+                  <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-200">
+                    {pg.rules.map((rule) => (
+                      <li key={rule}>{rule}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6">
+              <h3 className="mb-3 text-lg font-semibold text-white">Messaging constraints</h3>
+              <div className="space-y-3">
+                {data.threatModel.messagingConstraints.map((mc) => (
+                  <div
+                    key={mc.channel}
+                    className="rounded-2xl border border-white/10 bg-white/4 p-4"
+                  >
+                    <p className="font-medium text-white">{mc.channel}</p>
+                    <p className="muted mt-2 text-sm">{mc.maxContentScope}</p>
+                    <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                      Prohibited content
+                    </p>
+                    <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-red-200/80">
+                      {mc.prohibitedContent.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <ActionLink href="/api/threat-model" label="Inspect threat model JSON" />
+            </div>
+          </div>
+        </section>
+
         <section className="grid gap-6 xl:grid-cols-[1.1fr,0.9fr]">
           <div className="glass-card rounded-[28px] p-7">
             <SectionHeading

@@ -1,5 +1,6 @@
 import {
   buildCoachDashboardState,
+  buildThreatModelSummary,
   demoAthleteProfile,
   demoCompletedWorkouts,
   demoDeferredFeatures,
@@ -12,6 +13,8 @@ import { integrationStatusCards } from "@personal-running-coach/integrations";
 import { getEnvironmentStatus } from "./server-config";
 
 export function getDashboardData() {
+  const threatModel = buildThreatModelSummary();
+
   return {
     dashboard: buildCoachDashboardState({
       profile: demoAthleteProfile,
@@ -25,5 +28,6 @@ export function getDashboardData() {
     integrations: integrationStatusCards,
     sensitiveFieldControls,
     tableCatalog,
+    threatModel,
   };
 }
