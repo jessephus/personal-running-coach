@@ -11,3 +11,4 @@ coverage
 !.env.example
 apps/web/.next
 apps/web/out
+local_temp
