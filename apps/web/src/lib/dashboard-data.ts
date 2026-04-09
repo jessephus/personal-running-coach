@@ -3,6 +3,7 @@ import {
   buildCoachDashboardState,
   buildGovernanceSummary,
   buildThreatModelSummary,
+  coachPersona,
   demoAthleteProfile,
   demoCompletedWorkouts,
   demoDeferredFeatures,
@@ -32,6 +33,7 @@ export function getDashboardData() {
   const threatModel = buildThreatModelSummary();
 
   return {
+    coachPersona,
     dashboard: buildCoachDashboardState({
       profile: demoAthleteProfile,
       goals: demoGoals,

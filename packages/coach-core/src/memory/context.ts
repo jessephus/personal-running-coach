@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------
 
 import type { AthleteProfile, CoachMemory, CompletedWorkout } from "../types";
+import { coachPersona, formatCoachPersonaForPrompt } from "../persona";
 import type { ConversationThread, ThreadWindow } from "./conversation";
 import type { AthleteStateSummary } from "./athlete-state";
 import { buildThreadWindow } from "./conversation";
@@ -24,6 +25,8 @@ export type CoachingContextInput = {
 };
 
 export type CoachingContext = {
+  /** Shared coach identity and philosophy for prompt grounding. */
+  coachPersonaText: string;
   /** Prose paragraph ready to paste as the athlete preamble in a system prompt. */
   athleteSummaryText: string;
   /** Memories ranked for this session (injury-first when risk is elevated). */
@@ -95,6 +98,7 @@ export function buildCoachingContext({
     : null;
 
   return {
+    coachPersonaText: formatCoachPersonaForPrompt(),
     athleteSummaryText: buildAthleteSummaryText(stateSummary, profile),
     relevantMemories,
     recentWorkoutSummaries,
@@ -140,7 +144,9 @@ function buildCoachingInstructions(
   profile: AthleteProfile,
 ): string[] {
   const instructions = [
+    `You are ${coachPersona.name}, a quiet and steady running coach.`,
     `Use a ${profile.coachingStyle} coaching tone.`,
+    ...coachPersona.voiceDirectives,
     "Ground all suggestions in the athlete's recent workouts, goals, and memory context.",
     "Never include OAuth tokens, API keys, raw injury notes, or medical terminology in responses.",
   ];
@@ -166,6 +172,8 @@ function buildCoachingInstructions(
  */
 export function formatContextForPrompt(context: CoachingContext): string {
   const sections: string[] = [];
+
+  sections.push(`## Coach Persona\n${context.coachPersonaText}`);
 
   sections.push(`## Athlete Summary\n${context.athleteSummaryText}`);
 

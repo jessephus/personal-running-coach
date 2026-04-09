@@ -35,9 +35,12 @@ export default function Home() {
           <div className="glass-card rounded-[28px] p-7">
             <SectionHeading
               eyebrow="Coach focus"
-              title={`What the coach should remember about ${data.dashboard.athleteName}`}
+              title={`What ${data.coachPersona.name} should remember about ${data.dashboard.athleteName}`}
               description={data.dashboard.currentFocus}
             />
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">
+              {data.coachPersona.overview} {data.coachPersona.philosophy}
+            </p>
             <div className="mt-6 grid gap-6 lg:grid-cols-2">
               <ListCard title="Coach priorities" items={data.dashboard.coachPriorities} />
               <ListCard title="Risk flags" items={data.dashboard.riskFlags} tone="amber" />
