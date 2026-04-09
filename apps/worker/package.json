@@ -1,0 +1,17 @@
+{
+  "name": "@personal-running-coach/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc --noEmit -p tsconfig.json",
+    "lint": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@personal-running-coach/coach-core": "*",
+    "@personal-running-coach/db": "*",
+    "@personal-running-coach/integrations": "*"
+  }
+}

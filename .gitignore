@@ -1,0 +1,13 @@
+node_modules
+.npm
+.next
+out
+dist
+coverage
+*.log
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+apps/web/.next
+apps/web/out
