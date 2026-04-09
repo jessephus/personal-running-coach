@@ -67,6 +67,67 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="glass-card rounded-[28px] p-7">
+          <SectionHeading
+            eyebrow="Coaching workflows"
+            title="Live coaching output previews"
+            description="Each workflow runs against the current athlete state and produces structured coaching advice with conservative guardrails."
+          />
+          <div className="mt-6 grid gap-5 xl:grid-cols-2">
+            {data.coachingWorkflows.map((wf) => (
+              <div
+                key={wf.workflow}
+                className="rounded-2xl border border-white/10 bg-white/4 p-5"
+              >
+                <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                  <div className="space-y-1">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                      {wf.workflow}
+                    </p>
+                    <p className="text-lg font-semibold text-white">{wf.headline}</p>
+                  </div>
+                  <div className="flex shrink-0 gap-2">
+                    <span
+                      className={`rounded-full border px-3 py-1 text-xs uppercase tracking-[0.14em] ${
+                        wf.risk === "high"
+                          ? "border-red-300/30 bg-red-300/15 text-red-100"
+                          : wf.risk === "medium"
+                            ? "border-amber-300/30 bg-amber-300/15 text-amber-100"
+                            : "border-emerald-300/30 bg-emerald-300/15 text-emerald-100"
+                      }`}
+                    >
+                      {wf.risk} risk
+                    </span>
+                    {wf.requiresApproval && (
+                      <span className="rounded-full border border-red-300/30 bg-red-300/15 px-3 py-1 text-xs uppercase tracking-[0.14em] text-red-100">
+                        Needs approval
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-4 space-y-2">
+                  {wf.bodyParagraphs.map((p, i) => (
+                    <p key={i} className="text-sm leading-6 text-slate-200">
+                      {p}
+                    </p>
+                  ))}
+                </div>
+                {wf.approvalReason && (
+                  <p className="mt-3 text-sm leading-6 text-amber-200/80">
+                    ⚠️ {wf.approvalReason}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <ActionLink href="/api/coaching/debrief" label="Post-workout debrief JSON" />
+            <ActionLink href="/api/coaching/weekly-review" label="Weekly review JSON" />
+            <ActionLink href="/api/coaching/next-workout" label="Next workout JSON" />
+            <ActionLink href="/api/coaching/fatigue-check" label="Fatigue check JSON" />
+          </div>
+        </section>
+
         <section className="grid gap-6 xl:grid-cols-[1.35fr,1fr]">
           <div className="glass-card rounded-[28px] p-7">
             <SectionHeading

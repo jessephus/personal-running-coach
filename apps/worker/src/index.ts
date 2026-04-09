@@ -3,15 +3,28 @@
 //
 // Responsibilities:
 //   - Validate required environment variables at startup.
-//   - Run the proactive Telegram check-in scheduler.
+//   - Run the proactive coaching scheduler with workflow-driven nudges.
 //
-// The scheduler sends time-appropriate nudges to the configured Telegram chat
-// at a configurable interval (CHECKIN_INTERVAL_HOURS, default 24).
+// The scheduler uses coaching workflows (post-workout debrief, weekly review,
+// fatigue check, next-workout suggestion) to build contextual check-in
+// messages instead of generic time-based nudges.
 //
 // All outbound messages are constrained to OUTBOUND_MAX_CHARS (concise nudges
 // only, per the messaging constraint policy). No health data is ever sent.
 // ---------------------------------------------------------------------------
 
+import {
+  buildAthleteStateSummary,
+  demoAthleteProfile,
+  demoCompletedWorkouts,
+  demoGoals,
+  demoMemories,
+  evaluateFatigueCheck,
+  generateNextWorkoutSuggestion,
+  generatePostWorkoutDebrief,
+  generateWeeklyReview,
+  type WorkflowResult,
+} from "@personal-running-coach/coach-core";
 import {
   createTelegramClient,
   type TelegramClient,
@@ -37,26 +50,64 @@ try {
 }
 
 // ---------------------------------------------------------------------------
-// Nudge content
+// Coaching workflow–driven nudges
 // ---------------------------------------------------------------------------
 
-const MORNING_NUDGE = "Good morning! How are you feeling today? Any runs planned? 🏃";
-const AFTERNOON_NUDGE =
-  "Afternoon check-in: how's your energy? Did you get a workout in? 💪";
-const EVENING_NUDGE =
-  "Evening check-in: how did your day go? Any training to log? 🌙";
-
 /**
- * Builds a short, time-appropriate nudge message.
+ * Selects the most relevant coaching workflow to run based on the current
+ * athlete state and time of day, then returns the Telegram message.
  *
- * Messages are well under OUTBOUND_MAX_CHARS — no health data, no verbose
- * analysis, no memory dumps (per messaging constraint policy).
+ * Priority order:
+ * 1. Fatigue/injury check — if signals are elevated, this takes precedence.
+ * 2. Post-workout debrief — if there's a recent workout to discuss.
+ * 3. Weekly review — on the configured review cadence.
+ * 4. Next-workout suggestion — default proactive nudge.
  */
-function buildCheckinNudge(): string {
+function selectCoachingNudge(): WorkflowResult {
+  const stateSummary = buildAthleteStateSummary({
+    profile: demoAthleteProfile,
+    goals: demoGoals,
+    memories: demoMemories,
+    recentWorkouts: demoCompletedWorkouts,
+  });
+
+  // 1. Fatigue/injury check takes priority
+  const fatigueResult = evaluateFatigueCheck({
+    recentWorkouts: demoCompletedWorkouts,
+    stateSummary,
+    profile: demoAthleteProfile,
+  });
+  if (fatigueResult) return fatigueResult;
+
+  // 2. Post-workout debrief for the most recent workout
   const hour = new Date().getHours();
-  if (hour < 12) return MORNING_NUDGE;
-  if (hour < 17) return AFTERNOON_NUDGE;
-  return EVENING_NUDGE;
+  const latestWorkout = [...demoCompletedWorkouts].sort((a, b) =>
+    b.date.localeCompare(a.date),
+  )[0];
+
+  if (latestWorkout && hour >= 16) {
+    return generatePostWorkoutDebrief({
+      workout: latestWorkout,
+      stateSummary,
+      profile: demoAthleteProfile,
+    });
+  }
+
+  // 3. Weekly review on mornings
+  if (hour < 12) {
+    return generateWeeklyReview({
+      recentWorkouts: demoCompletedWorkouts,
+      stateSummary,
+      profile: demoAthleteProfile,
+    });
+  }
+
+  // 4. Next-workout suggestion as the default
+  return generateNextWorkoutSuggestion({
+    recentWorkouts: demoCompletedWorkouts,
+    stateSummary,
+    profile: demoAthleteProfile,
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -64,17 +115,19 @@ function buildCheckinNudge(): string {
 // ---------------------------------------------------------------------------
 
 async function sendCheckin(client: TelegramClient, chatId: string): Promise<void> {
-  const nudge = buildCheckinNudge();
-  const result = await client.sendMessage(chatId, nudge);
+  const result = selectCoachingNudge();
+  const sendResult = await client.sendMessage(chatId, result.telegramMessage);
 
-  if (result.ok) {
-    console.log(`[worker] check-in sent: message_id=${result.messageId}`);
-  } else if (result.rateLimited) {
+  if (sendResult.ok) {
+    console.log(
+      `[worker] ${result.workflow} sent: message_id=${sendResult.messageId}, risk=${result.risk}, approval=${result.requiresApproval}`,
+    );
+  } else if (sendResult.rateLimited) {
     console.warn(
-      `[worker] check-in rate-limited: retry_after_ms=${result.retryAfterMs ?? "unknown"}`,
+      `[worker] ${result.workflow} rate-limited: retry_after_ms=${sendResult.retryAfterMs ?? "unknown"}`,
     );
   } else {
-    console.error(`[worker] check-in failed: ${result.error}`);
+    console.error(`[worker] ${result.workflow} failed: ${sendResult.error}`);
   }
 }
 
@@ -97,7 +150,7 @@ async function runCheckinScheduler(): Promise<void> {
   }
 
   console.log(
-    `[worker] check-in scheduler started: interval=${intervalHours}h, chat=${chatId}`,
+    `[worker] coaching scheduler started: interval=${intervalHours}h, chat=${chatId}`,
   );
 
   // Send an immediate check-in on startup, then on the configured interval.
@@ -115,11 +168,18 @@ async function runCheckinScheduler(): Promise<void> {
 // ---------------------------------------------------------------------------
 
 if (demoMode) {
+  // In demo mode, preview the coaching workflow output to confirm behavior.
+  const nudge = selectCoachingNudge();
   console.log(
     JSON.stringify(
       {
         startup: "personal-running-coach worker booted (demo mode)",
         note: "Set TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM_WEBHOOK_SECRET, and MODEL_PROVIDER_API_KEY to enable the real scheduler.",
+        previewWorkflow: nudge.workflow,
+        previewHeadline: nudge.headline,
+        previewTelegram: nudge.telegramMessage,
+        previewRisk: nudge.risk,
+        previewRequiresApproval: nudge.requiresApproval,
       },
       null,
       2,
