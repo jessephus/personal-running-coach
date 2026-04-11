@@ -1,9 +1,10 @@
-import { getDashboardData } from "@/lib/dashboard-data";
+import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-
-export default async function Home() {
-  const data = await getDashboardData();
+// The old single-page dashboard is replaced by the (dashboard) route group.
+// This file exists only as a redirect target for legacy bookmarks.
+export default function RootPage() {
+  redirect("/");
+}
 
   return (
     <main className="app-shell flex flex-1 justify-center px-6 py-12 text-sm md:px-10">

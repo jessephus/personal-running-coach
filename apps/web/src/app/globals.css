@@ -1,17 +1,46 @@
 @import "tailwindcss";
 
+/* ── Day theme (default) ─────────────────────────────────────── */
 :root {
-  --background: #07111f;
-  --foreground: #e6eef8;
-  --card: #0d1828;
-  --border: rgba(161, 180, 206, 0.2);
-  --muted: #9fb0c6;
-  --accent: #76d7c4;
+  --bg-primary: #faf5f0;
+  --bg-secondary: #f0e8df;
+  --bg-card: #ffffff;
+  --text-primary: #2d2d2d;
+  --text-secondary: #6b5e54;
+  --accent: #E8725C;
+  --accent-hover: #d4624e;
+  --accent-secondary: #5D9E9B;
+  --accent-secondary-hover: #4e8b88;
+  --border: #e0d6cb;
+  --success: #5a9a6e;
+  --warning: #c49a3c;
+  --danger: #c45c5c;
+  --sidebar-bg: #f0e8df;
+  --sidebar-active: rgba(232, 114, 92, 0.15);
+}
+
+/* ── Night theme ─────────────────────────────────────────────── */
+[data-theme="night"] {
+  --bg-primary: #2a2320;
+  --bg-secondary: #352d28;
+  --bg-card: #3d342e;
+  --text-primary: #ede4da;
+  --text-secondary: #a8978a;
+  --accent: #E8725C;
+  --accent-hover: #f08570;
+  --accent-secondary: #6BB5B1;
+  --accent-secondary-hover: #5DA5A1;
+  --border: rgba(168, 151, 138, 0.25);
+  --success: #6aaa7e;
+  --warning: #d4aa4c;
+  --danger: #d46c6c;
+  --sidebar-bg: #352d28;
+  --sidebar-active: rgba(232, 114, 92, 0.15);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg-primary);
+  --color-foreground: var(--text-primary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -21,39 +50,16 @@
 }
 
 html {
-  background: radial-gradient(circle at top, #10233a 0%, #07111f 58%, #050c15 100%);
+  background: var(--bg-primary);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 a {
   color: inherit;
   text-decoration: none;
-}
-
-.app-shell {
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top right, rgba(118, 215, 196, 0.12), transparent 28%),
-    radial-gradient(circle at bottom left, rgba(72, 151, 255, 0.12), transparent 24%);
-}
-
-.glass-card {
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--card) 92%, black 8%);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.24);
-}
-
-.eyebrow {
-  color: var(--accent);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.muted {
-  color: var(--muted);
 }
