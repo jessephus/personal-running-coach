@@ -29,6 +29,15 @@ Those deferred items are represented as structured future specs in `packages/coa
 - `packages/integrations` — integration helpers for Strava and Telegram
 - `scripts/create-deferred-issues.ts` — GitHub issue generator for deferred MVP items
 
+## Deployment modes
+
+This repo now supports both:
+
+- **Direct host / cloud deployment** — run the web app and worker as normal Node processes against any Postgres instance.
+- **Self-hosted local stack** — run Postgres, migrations, the web app, and the worker together with Docker Compose.
+
+The application code path is the same in both modes. The difference is only how the processes are started and where `DATABASE_URL` points.
+
 ## Environment
 
 Copy `.env.example` to `.env` and fill in the values you plan to use:
@@ -47,6 +56,18 @@ Important values:
 - `TELEGRAM_CHAT_ID`
 - `TELEGRAM_WEBHOOK_SECRET`
 - `MODEL_PROVIDER_API_KEY`
+- `MODEL_PROVIDER_BASE_URL` (optional, for OpenAI-compatible providers)
+- `MODEL_PROVIDER_MODEL` (optional, to override the default structured-output model)
+- `CHECKIN_INTERVAL_HOURS` (optional, for the worker cadence)
+
+Optional self-host overrides used by `docker-compose.yml`:
+
+- `SELF_HOST_APP_URL`
+- `SELF_HOST_APP_PORT`
+- `SELF_HOST_POSTGRES_DB`
+- `SELF_HOST_POSTGRES_USER`
+- `SELF_HOST_POSTGRES_PASSWORD`
+- `SELF_HOST_POSTGRES_PORT`
 
 ## Commands
 
@@ -58,6 +79,44 @@ npm run db:generate
 npm run db:migrate
 npm run check
 ```
+
+Self-hosted stack commands:
+
+```bash
+npm run selfhost:up
+npm run selfhost:down
+npm run selfhost:logs
+npm run selfhost:migrate
+```
+
+Those commands use a small wrapper script that works with either `docker compose` or `docker-compose`.
+
+## Self-host locally
+
+1. Copy `.env.example` to `.env`.
+2. Fill in the Strava, Telegram, encryption, and model-provider secrets.
+3. Install Docker plus Docker Compose (`docker compose` plugin or `docker-compose` binary).
+4. Run `npm run selfhost:up`.
+5. Open the dashboard at `SELF_HOST_APP_URL` (defaults to `http://localhost:3000`).
+
+Notes:
+
+- Docker Compose starts **Postgres**, runs **migrations**, then starts the **web app** and **worker**.
+- The Compose stack injects its own internal `DATABASE_URL`, so your host-machine `DATABASE_URL` can still point somewhere else for non-Docker workflows.
+- If you want Strava and Telegram webhooks to hit your self-hosted app, `SELF_HOST_APP_URL` must be reachable from the public internet. For a laptop/local setup, that usually means using a tunnel such as ngrok or Cloudflare Tunnel.
+- For a LAN or VPS deployment, point `SELF_HOST_APP_URL` at that reachable hostname instead of localhost.
+
+## Direct host or cloud deploy
+
+If you want to run without Docker Compose:
+
+1. Provision Postgres anywhere you want.
+2. Set `DATABASE_URL` to that database.
+3. Run `npm run db:migrate`.
+4. Start the web app with `npm run start --workspace @personal-running-coach/web -- --hostname 0.0.0.0 --port 3000`.
+5. Start the worker with `npm run start --workspace @personal-running-coach/worker`.
+
+This path works for a VPS, a home server, Railway/Render/Fly-style deployments, or any other Node-friendly host.
 
 To create GitHub Issues for the deferred roadmap:
 
@@ -71,6 +130,7 @@ npm run issues:deferred -- jessephus/personal-running-coach
 - Use application-layer encryption for the most sensitive fields such as tokens, injury notes, and message bodies.
 - Keep WhatsApp/Telegram messages concise and avoid sending detailed injury context there.
 - Minimize and pseudonymize model prompts before sending them to frontier-model providers.
+- Do not expose your `.env` file, bot tokens, or encryption key inside container images or public repos.
 
 ## Data governance
 

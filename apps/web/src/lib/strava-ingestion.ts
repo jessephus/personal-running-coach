@@ -5,7 +5,10 @@ import {
   auditEvents,
   completedWorkouts,
   createDatabaseConnection,
+  decryptString,
+  encryptString,
   rawImports,
+  sha256Hex,
   sourceConnections,
   type DatabaseClient,
   type SourceConnectionRow,
@@ -28,8 +31,6 @@ import {
   requireEnvVar,
   StravaApiError,
 } from "@personal-running-coach/integrations";
-
-import { decryptString, encryptString, sha256Hex } from "@/lib/crypto";
 
 const STRAVA_PROVIDER = "strava" as const;
 const DEFAULT_SYNC_LOOKBACK_DAYS = 30;

@@ -1,37 +1,25 @@
 import { NextResponse } from "next/server";
-import {
-  buildAthleteStateSummary,
-  demoAthleteProfile,
-  demoCompletedWorkouts,
-  demoGoals,
-  demoMemories,
-  generatePostWorkoutDebrief,
-} from "@personal-running-coach/coach-core";
+import { createDatabaseConnection, generateCoachingWorkflowForAthlete, loadAthleteRuntimeContext } from "@personal-running-coach/db";
 
-export function GET() {
-  const stateSummary = buildAthleteStateSummary({
-    profile: demoAthleteProfile,
-    goals: demoGoals,
-    memories: demoMemories,
-    recentWorkouts: demoCompletedWorkouts,
-  });
+export async function GET() {
+  const connection = createDatabaseConnection();
 
-  const latestWorkout = [...demoCompletedWorkouts].sort((a, b) =>
-    b.date.localeCompare(a.date),
-  )[0];
+  try {
+    const context = await loadAthleteRuntimeContext(connection.db);
+    if (!context?.recentWorkouts.length) {
+      return NextResponse.json(
+        { error: "No workouts available for debrief." },
+        { status: 404 },
+      );
+    }
 
-  if (!latestWorkout) {
-    return NextResponse.json(
-      { error: "No workouts available for debrief." },
-      { status: 404 },
-    );
+    const generated = await generateCoachingWorkflowForAthlete({
+      athleteId: context.athleteId,
+      workflow: "post-workout-debrief",
+    });
+
+    return NextResponse.json(generated.result);
+  } finally {
+    await connection.close();
   }
-
-  const result = generatePostWorkoutDebrief({
-    workout: latestWorkout,
-    stateSummary,
-    profile: demoAthleteProfile,
-  });
-
-  return NextResponse.json(result);
 }

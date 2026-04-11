@@ -1,7 +1,9 @@
 import { getDashboardData } from "@/lib/dashboard-data";
 
-export default function Home() {
-  const data = getDashboardData();
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const data = await getDashboardData();
 
   return (
     <main className="app-shell flex flex-1 justify-center px-6 py-12 text-sm md:px-10">
@@ -74,7 +76,7 @@ export default function Home() {
           <SectionHeading
             eyebrow="Coaching workflows"
             title="Live coaching output previews"
-            description="Each workflow runs against the current athlete state and produces structured coaching advice with conservative guardrails."
+            description="The LLM is the primary coaching engine; code-owned guardrails still gate triggers, approvals, and channel safety."
           />
           <div className="mt-6 grid gap-5 xl:grid-cols-2">
             {data.coachingWorkflows.map((wf) => (
@@ -128,6 +130,37 @@ export default function Home() {
             <ActionLink href="/api/coaching/weekly-review" label="Weekly review JSON" />
             <ActionLink href="/api/coaching/next-workout" label="Next workout JSON" />
             <ActionLink href="/api/coaching/fatigue-check" label="Fatigue check JSON" />
+          </div>
+        </section>
+
+        <section className="glass-card rounded-[28px] p-7">
+          <SectionHeading
+            eyebrow="Deterministic guardrails"
+            title="Code-owned rules that shape the model"
+            description="These rules no longer generate the coaching copy themselves, but they still decide when to escalate, require approval, or constrain delivery."
+          />
+          <div className="mt-6 grid gap-4 xl:grid-cols-2">
+            {data.deterministicGuardrails.map((rule) => (
+              <div
+                key={rule.id}
+                className="rounded-2xl border border-white/10 bg-white/4 p-5"
+              >
+                <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                  <p className="text-lg font-semibold text-white">{rule.title}</p>
+                  <span className="rounded-full border border-white/10 bg-slate-200/6 px-3 py-1 text-xs uppercase tracking-[0.14em] text-slate-200">
+                    {rule.scope}
+                  </span>
+                </div>
+                <div className="mt-4 space-y-3 text-sm leading-6">
+                  <p className="text-slate-200">
+                    <span className="font-medium text-white">When:</span> {rule.condition}
+                  </p>
+                  <p className="text-slate-300">
+                    <span className="font-medium text-white">Effect:</span> {rule.effect}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 

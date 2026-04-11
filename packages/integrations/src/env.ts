@@ -127,6 +127,20 @@ export const webEnvSpecs: EnvVarSpec[] = [
       "API key for the frontier model provider. Used only with privacy controls; never included in prompt logs.",
     classification: "critical",
   },
+  {
+    key: "MODEL_PROVIDER_BASE_URL",
+    required: false,
+    description:
+      "Optional OpenAI-compatible base URL for the model provider. Defaults to the public OpenAI API.",
+    classification: "medium",
+  },
+  {
+    key: "MODEL_PROVIDER_MODEL",
+    required: false,
+    description:
+      "Optional model name used for structured coaching calls. Defaults to a small reasoning-capable model.",
+    classification: "low",
+  },
 ];
 
 /**
@@ -175,6 +189,20 @@ export const workerEnvSpecs: EnvVarSpec[] = [
     description:
       "API key for the frontier model provider. Used only with privacy controls.",
     classification: "critical",
+  },
+  {
+    key: "MODEL_PROVIDER_BASE_URL",
+    required: false,
+    description:
+      "Optional OpenAI-compatible base URL for the model provider. Defaults to the public OpenAI API.",
+    classification: "medium",
+  },
+  {
+    key: "MODEL_PROVIDER_MODEL",
+    required: false,
+    description:
+      "Optional model name used for structured coaching calls. Defaults to a small reasoning-capable model.",
+    classification: "low",
   },
 ];
 

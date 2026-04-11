@@ -10,6 +10,14 @@ import type { CompletedWorkout } from "../types";
 import type { AthleteStateSummary, InjuryRiskLevel } from "../memory/athlete-state";
 import type { SuggestionRisk } from "./types";
 
+export type DeterministicGuardrail = {
+  id: string;
+  title: string;
+  scope: "workflow-trigger" | "approval" | "delivery";
+  condition: string;
+  effect: string;
+};
+
 type RiskInput = {
   /** The type of workout being suggested, if any. */
   suggestedWorkoutType?: CompletedWorkout["type"];
@@ -28,6 +36,72 @@ type RiskClassification = {
   requiresApproval: boolean;
   reason: string;
 };
+
+export const deterministicGuardrails: DeterministicGuardrail[] = [
+  {
+    id: "fatigue-high-injury-risk",
+    title: "Fatigue check takes over when injury risk is high",
+    scope: "workflow-trigger",
+    condition: "Current injury risk is high.",
+    effect: "The app prioritizes a fatigue / recovery conversation instead of performance coaching.",
+  },
+  {
+    id: "fatigue-high-effort-load",
+    title: "High sustained effort triggers a check-in",
+    scope: "workflow-trigger",
+    condition: "Average perceived effort reaches 7/10 or higher.",
+    effect: "The app prefers a fatigue / recovery workflow over generic nudges.",
+  },
+  {
+    id: "fatigue-no-recovery-after-hard-block",
+    title: "No-recovery hard block triggers caution",
+    scope: "workflow-trigger",
+    condition: "Three or more hard sessions occur without a recovery session.",
+    effect: "The app escalates toward a fatigue check and recovery-first guidance.",
+  },
+  {
+    id: "approval-high-injury-plus-intensity",
+    title: "Intensity is blocked behind approval when injury risk is high",
+    scope: "approval",
+    condition: "Injury risk is high and the suggested session is not easy or recovery.",
+    effect: "The recommendation is marked high risk and requires explicit approval.",
+  },
+  {
+    id: "approval-back-to-back-intensity",
+    title: "Back-to-back intensity requires approval",
+    scope: "approval",
+    condition: "A hard session happened within the last 48 hours and the model suggests tempo or intervals.",
+    effect: "The recommendation is marked high risk and requires approval.",
+  },
+  {
+    id: "approval-too-many-hard-sessions",
+    title: "Too many hard sessions blocks more intensity",
+    scope: "approval",
+    condition: "There are already three or more hard sessions in the current period and the model suggests tempo or intervals.",
+    effect: "The recommendation is marked high risk and requires approval.",
+  },
+  {
+    id: "approval-moderate-injury-plus-intensity",
+    title: "Moderate injury risk still reviews intensity",
+    scope: "approval",
+    condition: "Injury risk is moderate and the model suggests tempo or intervals.",
+    effect: "The recommendation is marked medium risk and flagged for review.",
+  },
+  {
+    id: "approval-distance-jump",
+    title: "Large distance jumps are reviewed",
+    scope: "approval",
+    condition: "Suggested distance is more than 20% above the recent average.",
+    effect: "The recommendation is at least medium risk; above 30% becomes high risk and requires approval.",
+  },
+  {
+    id: "delivery-telegram-truncation",
+    title: "Telegram output stays narrow",
+    scope: "delivery",
+    condition: "Any outbound coaching message is prepared for Telegram.",
+    effect: "The message is truncated to the Telegram safety limit and stripped of detailed medical language.",
+  },
+];
 
 /**
  * Classify the risk of a coaching suggestion.

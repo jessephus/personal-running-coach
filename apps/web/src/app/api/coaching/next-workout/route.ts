@@ -1,26 +1,10 @@
 import { NextResponse } from "next/server";
-import {
-  buildAthleteStateSummary,
-  demoAthleteProfile,
-  demoCompletedWorkouts,
-  demoGoals,
-  demoMemories,
-  generateNextWorkoutSuggestion,
-} from "@personal-running-coach/coach-core";
+import { generateCoachingWorkflowForAthlete } from "@personal-running-coach/db";
 
-export function GET() {
-  const stateSummary = buildAthleteStateSummary({
-    profile: demoAthleteProfile,
-    goals: demoGoals,
-    memories: demoMemories,
-    recentWorkouts: demoCompletedWorkouts,
+export async function GET() {
+  const generated = await generateCoachingWorkflowForAthlete({
+    workflow: "next-workout-suggestion",
   });
 
-  const result = generateNextWorkoutSuggestion({
-    recentWorkouts: demoCompletedWorkouts,
-    stateSummary,
-    profile: demoAthleteProfile,
-  });
-
-  return NextResponse.json(result);
+  return NextResponse.json(generated.result);
 }

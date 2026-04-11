@@ -15,8 +15,11 @@ import {
   coachMessages,
   completedWorkouts,
   createDatabaseConnection,
+  decryptString,
+  encryptString,
   goals,
   rawImports,
+  sha256Hex,
   sourceConnections,
   type DatabaseClient,
 } from "@personal-running-coach/db";
@@ -29,8 +32,6 @@ import {
   type DeletionScope,
   type ExportSection,
 } from "@personal-running-coach/coach-core";
-
-import { decryptString, encryptString, sha256Hex } from "@/lib/crypto";
 
 // ---------------------------------------------------------------------------
 // Export

@@ -1,34 +1,51 @@
 import { NextResponse } from "next/server";
+import { buildAthleteStateSummary, evaluateFatigueCheck } from "@personal-running-coach/coach-core";
 import {
-  buildAthleteStateSummary,
-  demoAthleteProfile,
-  demoCompletedWorkouts,
-  demoGoals,
-  demoMemories,
-  evaluateFatigueCheck,
-} from "@personal-running-coach/coach-core";
+  createDatabaseConnection,
+  generateCoachingWorkflowForAthlete,
+  loadAthleteRuntimeContext,
+} from "@personal-running-coach/db";
 
-export function GET() {
-  const stateSummary = buildAthleteStateSummary({
-    profile: demoAthleteProfile,
-    goals: demoGoals,
-    memories: demoMemories,
-    recentWorkouts: demoCompletedWorkouts,
-  });
+export async function GET() {
+  const connection = createDatabaseConnection();
 
-  const result = evaluateFatigueCheck({
-    recentWorkouts: demoCompletedWorkouts,
-    stateSummary,
-    profile: demoAthleteProfile,
-  });
+  try {
+    const context = await loadAthleteRuntimeContext(connection.db);
+    if (!context) {
+      return NextResponse.json(
+        { error: "No athlete profile is available for fatigue review." },
+        { status: 404 },
+      );
+    }
 
-  if (!result) {
-    return NextResponse.json({
-      workflow: "fatigue-check",
-      status: "not-triggered",
-      message: "No fatigue or injury check-in is needed based on current signals.",
+    const stateSummary = buildAthleteStateSummary({
+      profile: context.profile,
+      goals: context.goals,
+      memories: context.memories,
+      recentWorkouts: context.recentWorkouts,
     });
-  }
 
-  return NextResponse.json(result);
+    const trigger = evaluateFatigueCheck({
+      recentWorkouts: context.recentWorkouts,
+      stateSummary,
+      profile: context.profile,
+    });
+
+    if (!trigger) {
+      return NextResponse.json({
+        workflow: "fatigue-check",
+        status: "not-triggered",
+        message: "No fatigue or injury check-in is needed based on current signals.",
+      });
+    }
+
+    const generated = await generateCoachingWorkflowForAthlete({
+      athleteId: context.athleteId,
+      workflow: "fatigue-check",
+    });
+
+    return NextResponse.json(generated.result);
+  } finally {
+    await connection.close();
+  }
 }

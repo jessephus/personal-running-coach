@@ -26,6 +26,10 @@ import {
   type WorkflowResult,
 } from "@personal-running-coach/coach-core";
 import {
+  generateCoachingWorkflowForAthlete,
+  persistOutboundCoachMessage,
+} from "@personal-running-coach/db";
+import {
   createTelegramClient,
   type TelegramClient,
   validateEnv,
@@ -63,7 +67,7 @@ try {
  * 3. Weekly review — on the configured review cadence.
  * 4. Next-workout suggestion — default proactive nudge.
  */
-function selectCoachingNudge(): WorkflowResult {
+function selectDemoCoachingNudge(): WorkflowResult {
   const stateSummary = buildAthleteStateSummary({
     profile: demoAthleteProfile,
     goals: demoGoals,
@@ -115,10 +119,24 @@ function selectCoachingNudge(): WorkflowResult {
 // ---------------------------------------------------------------------------
 
 async function sendCheckin(client: TelegramClient, chatId: string): Promise<void> {
-  const result = selectCoachingNudge();
+  const generated = await generateCoachingWorkflowForAthlete();
+  const result = generated.result;
   const sendResult = await client.sendMessage(chatId, result.telegramMessage);
 
   if (sendResult.ok) {
+    await persistOutboundCoachMessage({
+      athleteId: generated.athleteId,
+      channel: "telegram",
+      externalMessageId: String(sendResult.messageId),
+      body: result.telegramMessage,
+      metadata: {
+        workflow: result.workflow,
+        risk: result.risk,
+        requiresApproval: result.requiresApproval,
+        approvalReason: result.approvalReason,
+      },
+    });
+
     console.log(
       `[worker] ${result.workflow} sent: message_id=${sendResult.messageId}, risk=${result.risk}, approval=${result.requiresApproval}`,
     );
@@ -169,7 +187,7 @@ async function runCheckinScheduler(): Promise<void> {
 
 if (demoMode) {
   // In demo mode, preview the coaching workflow output to confirm behavior.
-  const nudge = selectCoachingNudge();
+  const nudge = selectDemoCoachingNudge();
   console.log(
     JSON.stringify(
       {

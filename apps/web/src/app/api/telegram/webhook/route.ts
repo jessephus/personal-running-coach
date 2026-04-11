@@ -19,6 +19,7 @@ import {
   type TelegramUpdate,
   verifyWebhookSecret,
 } from "@personal-running-coach/integrations";
+import { extractMemoriesFromInboundMessage } from "@personal-running-coach/db";
 
 import { requireEnvVar } from "@/lib/server-config";
 
@@ -59,10 +60,23 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     `[telegram/webhook] accepted update_id=${filterResult.updateId} message_id=${filterResult.messageId} preview_chars=${preview.length}`,
   );
 
-  // TODO: persist to coach_messages (body_ciphertext + body_preview) and
-  //       audit_events once the worker DB connection is wired into the web app.
-  //       The filtering + verification layer is complete; persistence is the
-  //       next implementation step.
+  const extracted = await extractMemoriesFromInboundMessage({
+    externalMessageId: String(filterResult.messageId),
+    body: filterResult.text,
+    channel: "telegram",
+    metadata: {
+      telegramChatId: filterResult.chatId,
+      telegramMessageId: filterResult.messageId,
+      telegramUpdateId: filterResult.updateId,
+    },
+  });
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({
+    ok: true,
+    storedMemories: extracted.storedMemories.map((memory) => ({
+      category: memory.category,
+      title: memory.title,
+      detail: memory.detail,
+    })),
+  });
 }
