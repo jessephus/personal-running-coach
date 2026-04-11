@@ -17,7 +17,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import {
   requireEnvVar,
   setupTelegramWebhook,
-} from "@personal-running-coach/integrations";
+} from "@coachinclaw/integrations";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const botToken = requireEnvVar("TELEGRAM_BOT_TOKEN");

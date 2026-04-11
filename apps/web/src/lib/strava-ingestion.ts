@@ -12,7 +12,7 @@ import {
   sourceConnections,
   type DatabaseClient,
   type SourceConnectionRow,
-} from "@personal-running-coach/db";
+} from "@coachinclaw/db";
 import {
   type StravaActivity,
   type StravaAthleteSummary,
@@ -30,7 +30,7 @@ import {
   refreshStravaAccessToken,
   requireEnvVar,
   StravaApiError,
-} from "@personal-running-coach/integrations";
+} from "@coachinclaw/integrations";
 
 const STRAVA_PROVIDER = "strava" as const;
 const DEFAULT_SYNC_LOOKBACK_DAYS = 30;

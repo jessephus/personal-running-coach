@@ -1,5 +1,5 @@
 {
-  "name": "@personal-running-coach/worker",
+  "name": "@coachinclaw/worker",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -11,8 +11,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@personal-running-coach/coach-core": "*",
-    "@personal-running-coach/db": "*",
-    "@personal-running-coach/integrations": "*"
+    "@coachinclaw/coach-core": "*",
+    "@coachinclaw/db": "*",
+    "@coachinclaw/integrations": "*"
   }
 }

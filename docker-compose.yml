@@ -3,7 +3,7 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${SELF_HOST_POSTGRES_DB:-personal_running_coach}
+      POSTGRES_DB: ${SELF_HOST_POSTGRES_DB:-coachinclaw}
       POSTGRES_USER: ${SELF_HOST_POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${SELF_HOST_POSTGRES_PASSWORD:-postgres}
     ports:
@@ -14,7 +14,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${SELF_HOST_POSTGRES_USER:-postgres} -d ${SELF_HOST_POSTGRES_DB:-personal_running_coach}",
+          "pg_isready -U ${SELF_HOST_POSTGRES_USER:-postgres} -d ${SELF_HOST_POSTGRES_DB:-coachinclaw}",
         ]
       interval: 5s
       timeout: 5s
@@ -26,7 +26,7 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgres://${SELF_HOST_POSTGRES_USER:-postgres}:${SELF_HOST_POSTGRES_PASSWORD:-postgres}@db:5432/${SELF_HOST_POSTGRES_DB:-personal_running_coach}
+      DATABASE_URL: postgres://${SELF_HOST_POSTGRES_USER:-postgres}:${SELF_HOST_POSTGRES_PASSWORD:-postgres}@db:5432/${SELF_HOST_POSTGRES_DB:-coachinclaw}
     depends_on:
       db:
         condition: service_healthy
@@ -39,7 +39,7 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgres://${SELF_HOST_POSTGRES_USER:-postgres}:${SELF_HOST_POSTGRES_PASSWORD:-postgres}@db:5432/${SELF_HOST_POSTGRES_DB:-personal_running_coach}
+      DATABASE_URL: postgres://${SELF_HOST_POSTGRES_USER:-postgres}:${SELF_HOST_POSTGRES_PASSWORD:-postgres}@db:5432/${SELF_HOST_POSTGRES_DB:-coachinclaw}
       NEXT_PUBLIC_APP_URL: ${SELF_HOST_APP_URL:-http://localhost:3000}
     depends_on:
       db:
@@ -51,7 +51,7 @@ services:
     command:
       - sh
       - -c
-      - npm run start --workspace @personal-running-coach/web -- --hostname 0.0.0.0 --port 3000
+      - npm run start --workspace @coachinclaw/web -- --hostname 0.0.0.0 --port 3000
     healthcheck:
       test:
         [
@@ -69,7 +69,7 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgres://${SELF_HOST_POSTGRES_USER:-postgres}:${SELF_HOST_POSTGRES_PASSWORD:-postgres}@db:5432/${SELF_HOST_POSTGRES_DB:-personal_running_coach}
+      DATABASE_URL: postgres://${SELF_HOST_POSTGRES_USER:-postgres}:${SELF_HOST_POSTGRES_PASSWORD:-postgres}@db:5432/${SELF_HOST_POSTGRES_DB:-coachinclaw}
     depends_on:
       db:
         condition: service_healthy
@@ -80,7 +80,7 @@ services:
       - run
       - start
       - --workspace
-      - '@personal-running-coach/worker'
+      - '@coachinclaw/worker'
     restart: unless-stopped
 
 volumes:

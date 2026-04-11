@@ -10,7 +10,7 @@
 
 import { NextResponse, type NextRequest } from "next/server";
 
-import type { DeletionScope } from "@personal-running-coach/coach-core";
+import type { DeletionScope } from "@coachinclaw/coach-core";
 
 import { deleteAthleteData } from "@/lib/governance";
 

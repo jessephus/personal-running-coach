@@ -1,6 +1,6 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
 
-import { requireEnvVar } from "@personal-running-coach/integrations";
+import { requireEnvVar } from "@coachinclaw/integrations";
 
 const ENCRYPTION_PREFIX = "enc:v1";
 

@@ -4,7 +4,7 @@ import {
   verifySignedStravaOAuthState,
   type EnvValidationError,
   StravaApiError,
-} from "@personal-running-coach/integrations";
+} from "@coachinclaw/integrations";
 
 import { handleStravaOAuthCallback } from "@/lib/strava-ingestion";
 

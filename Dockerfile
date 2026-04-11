@@ -17,4 +17,4 @@ RUN npm run build
 
 ENV NODE_ENV=production
 
-CMD ["npm", "run", "start", "--workspace", "@personal-running-coach/web", "--", "--hostname", "0.0.0.0", "--port", "3000"]
+CMD ["npm", "run", "start", "--workspace", "@coachinclaw/web", "--", "--hostname", "0.0.0.0", "--port", "3000"]

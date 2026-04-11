@@ -16,19 +16,19 @@ import {
   generatePostWorkoutDebrief,
   generateWeeklyReview,
   type WorkflowResult,
-} from "@personal-running-coach/coach-core";
+} from "@coachinclaw/coach-core";
 import {
   createDatabaseConnection,
   loadAthleteRuntimeContext,
   sensitiveFieldControls,
   tableCatalog,
-} from "@personal-running-coach/db";
+} from "@coachinclaw/db";
 import {
   createModelProviderClient,
   integrationStatusCards,
   readEnvVar,
   requireEnvVar,
-} from "@personal-running-coach/integrations";
+} from "@coachinclaw/integrations";
 
 import { getEnvironmentStatus } from "./server-config";
 

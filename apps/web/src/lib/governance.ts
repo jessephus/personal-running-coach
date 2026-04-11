@@ -22,7 +22,7 @@ import {
   sha256Hex,
   sourceConnections,
   type DatabaseClient,
-} from "@personal-running-coach/db";
+} from "@coachinclaw/db";
 import {
   buildDeletionPlan,
   buildExportManifest,
@@ -31,7 +31,7 @@ import {
   retentionPolicies,
   type DeletionScope,
   type ExportSection,
-} from "@personal-running-coach/coach-core";
+} from "@coachinclaw/coach-core";
 
 // ---------------------------------------------------------------------------
 // Export

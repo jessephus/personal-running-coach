@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
-import { demoDeferredFeatures } from "@personal-running-coach/coach-core";
-import { integrationStatusCards } from "@personal-running-coach/integrations";
+import { demoDeferredFeatures } from "@coachinclaw/coach-core";
+import { integrationStatusCards } from "@coachinclaw/integrations";
 
 import { getEnvironmentStatus } from "@/lib/server-config";
 

@@ -16,14 +16,14 @@ import {
   type GenerateCoachingWorkflowOutput,
   type ExtractCoachMemoriesOutput,
   PromptPrivacyError,
-} from "@personal-running-coach/coach-core";
+} from "@coachinclaw/coach-core";
 import {
   buildMessagePreview,
   createModelProviderClient,
   readEnvVar,
   requireEnvVar,
   type ModelProviderClient,
-} from "@personal-running-coach/integrations";
+} from "@coachinclaw/integrations";
 
 import { createDatabaseConnection, type DatabaseClient } from "./client";
 import {

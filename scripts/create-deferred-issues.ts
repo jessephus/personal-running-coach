@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 
-import { demoDeferredFeatures } from "@personal-running-coach/coach-core";
+import { demoDeferredFeatures } from "@coachinclaw/coach-core";
 
 const repo = process.argv[2];
 

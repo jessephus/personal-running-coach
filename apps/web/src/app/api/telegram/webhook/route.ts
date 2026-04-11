@@ -18,8 +18,8 @@ import {
   filterInboundUpdate,
   type TelegramUpdate,
   verifyWebhookSecret,
-} from "@personal-running-coach/integrations";
-import { extractMemoriesFromInboundMessage } from "@personal-running-coach/db";
+} from "@coachinclaw/integrations";
+import { extractMemoriesFromInboundMessage } from "@coachinclaw/db";
 
 import { requireEnvVar } from "@/lib/server-config";
 

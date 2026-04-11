@@ -1,10 +1,10 @@
-# Copilot instructions for personal-running-coach
+# Copilot instructions for Coachin'Claw
 
-This file contains context and conventions for the personal-running-coach project, designed to help you (or an AI assistant) understand the codebase quickly and make effective changes.
+This file contains context and conventions for the Coachin'Claw project, designed to help you (or an AI assistant) understand the codebase quickly and make effective changes.
 
 ## Project overview
 
-**Personal Running Coach** is a health-sensitive coaching app that uses an LLM as the primary decision-making engine while keeping deterministic guardrails in code.
+**Coachin'Claw** is a health-sensitive coaching app that uses an LLM as the primary decision-making engine while keeping deterministic guardrails in code.
 
 **Core flows:**
 1. **Strava ingestion:** User connects Strava account → app fetches workouts → stored encrypted in DB
@@ -21,7 +21,7 @@ This file contains context and conventions for the personal-running-coach projec
 This is an npm workspace monorepo with 2 apps and 3 packages:
 
 ```
-personal-running-coach/
+CoachinClaw/
 ├── apps/
 │   ├── web/               # Next.js 16 dashboard + API routes
 │   └── worker/            # Background Telegram check-in daemon
@@ -163,8 +163,8 @@ npm run db:studio              # Open Drizzle Studio (interactive schema explore
 **Single workspace:**
 
 ```bash
-npm run build --workspace @personal-running-coach/web
-npm run typecheck --workspace @personal-running-coach/db
+npm run build --workspace @coachinclaw/web
+npm run typecheck --workspace @coachinclaw/db
 ```
 
 **Self-hosted (Docker Compose):**
@@ -298,4 +298,3 @@ Unencrypted metadata (athlete name, workout duration, approval reason) remains q
 - Custom user guardrail calibration UI (currently hardcoded)
 - More sophisticated memory extraction (currently basic heuristics)
 - Real Azure/custom endpoint model provider env contract
-

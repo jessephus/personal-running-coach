@@ -2,9 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   transpilePackages: [
-    "@personal-running-coach/coach-core",
-    "@personal-running-coach/db",
-    "@personal-running-coach/integrations",
+    "@coachinclaw/coach-core",
+    "@coachinclaw/db",
+    "@coachinclaw/integrations",
   ],
 };
 

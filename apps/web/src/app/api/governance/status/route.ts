@@ -7,7 +7,7 @@
 
 import { NextResponse } from "next/server";
 
-import { buildGovernanceSummary } from "@personal-running-coach/coach-core";
+import { buildGovernanceSummary } from "@coachinclaw/coach-core";
 
 export function GET() {
   return NextResponse.json(buildGovernanceSummary());

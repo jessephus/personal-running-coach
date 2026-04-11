@@ -1,5 +1,5 @@
 {
-  "name": "@personal-running-coach/web",
+  "name": "@coachinclaw/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,9 +10,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@personal-running-coach/coach-core": "*",
-    "@personal-running-coach/db": "*",
-    "@personal-running-coach/integrations": "*",
+    "@coachinclaw/coach-core": "*",
+    "@coachinclaw/db": "*",
+    "@coachinclaw/integrations": "*",
     "next": "16.2.3",
     "react": "19.2.4",
     "react-dom": "19.2.4"

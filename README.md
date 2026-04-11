@@ -1,4 +1,4 @@
-# Personal Running Coach
+# Coachin'Claw
 
 A security-first, single-user coaching app scaffold for training context, Strava imports, coach memory, and proactive Telegram nudges.
 
@@ -113,15 +113,15 @@ If you want to run without Docker Compose:
 1. Provision Postgres anywhere you want.
 2. Set `DATABASE_URL` to that database.
 3. Run `npm run db:migrate`.
-4. Start the web app with `npm run start --workspace @personal-running-coach/web -- --hostname 0.0.0.0 --port 3000`.
-5. Start the worker with `npm run start --workspace @personal-running-coach/worker`.
+4. Start the web app with `npm run start --workspace @coachinclaw/web -- --hostname 0.0.0.0 --port 3000`.
+5. Start the worker with `npm run start --workspace @coachinclaw/worker`.
 
 This path works for a VPS, a home server, Railway/Render/Fly-style deployments, or any other Node-friendly host.
 
 To create GitHub Issues for the deferred roadmap:
 
 ```bash
-npm run issues:deferred -- jessephus/personal-running-coach
+npm run issues:deferred -- jessephus/CoachinClaw
 ```
 
 ## Security baseline

@@ -1,5 +1,5 @@
 {
-  "name": "@personal-running-coach/db",
+  "name": "@coachinclaw/db",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -15,8 +15,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@personal-running-coach/coach-core": "*",
-    "@personal-running-coach/integrations": "*",
+    "@coachinclaw/coach-core": "*",
+    "@coachinclaw/integrations": "*",
     "drizzle-orm": "^0.45.2",
     "postgres": "^3.4.7"
   }

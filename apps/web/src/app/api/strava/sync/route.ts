@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { StravaApiError } from "@personal-running-coach/integrations";
+import { StravaApiError } from "@coachinclaw/integrations";
 
 import { runManualStravaSync } from "@/lib/strava-ingestion";
 

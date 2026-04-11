@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createDatabaseConnection, generateCoachingWorkflowForAthlete, loadAthleteRuntimeContext } from "@personal-running-coach/db";
+import { createDatabaseConnection, generateCoachingWorkflowForAthlete, loadAthleteRuntimeContext } from "@coachinclaw/db";
 
 export async function GET() {
   const connection = createDatabaseConnection();

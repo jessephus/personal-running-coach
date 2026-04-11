@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { generateCoachingWorkflowForAthlete } from "@personal-running-coach/db";
+import { generateCoachingWorkflowForAthlete } from "@coachinclaw/db";
 
 export async function GET() {
   const generated = await generateCoachingWorkflowForAthlete({

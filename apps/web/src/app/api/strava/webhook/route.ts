@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { StravaApiError, type StravaWebhookEvent } from "@personal-running-coach/integrations";
+import { StravaApiError, type StravaWebhookEvent } from "@coachinclaw/integrations";
 
 import {
   getStravaWebhookVerifyToken,

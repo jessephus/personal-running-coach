@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { buildAthleteStateSummary, evaluateFatigueCheck } from "@personal-running-coach/coach-core";
+import { buildAthleteStateSummary, evaluateFatigueCheck } from "@coachinclaw/coach-core";
 import {
   createDatabaseConnection,
   generateCoachingWorkflowForAthlete,
   loadAthleteRuntimeContext,
-} from "@personal-running-coach/db";
+} from "@coachinclaw/db";
 
 export async function GET() {
   const connection = createDatabaseConnection();

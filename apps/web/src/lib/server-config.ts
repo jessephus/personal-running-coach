@@ -2,10 +2,10 @@ import {
   getEnvMeta,
   readEnvVar,
   webEnvSpecs,
-} from "@personal-running-coach/integrations";
+} from "@coachinclaw/integrations";
 
-export type { EnvVarMeta, EnvVarSpec } from "@personal-running-coach/integrations";
-export { requireEnvVar, validateEnv, webEnvSpecs } from "@personal-running-coach/integrations";
+export type { EnvVarMeta, EnvVarSpec } from "@coachinclaw/integrations";
+export { requireEnvVar, validateEnv, webEnvSpecs } from "@coachinclaw/integrations";
 
 /** Non-secret server-side config values needed for routing and URL construction. */
 export type ServerConfig = {

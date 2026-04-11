@@ -1,5 +1,5 @@
 {
-  "name": "personal-running-coach",
+  "name": "coachinclaw",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,11 +9,11 @@
   ],
   "scripts": {
     "dev": "npm run dev:web",
-    "dev:web": "npm run dev --workspace @personal-running-coach/web",
-    "dev:worker": "npm run dev --workspace @personal-running-coach/worker",
-    "db:generate": "npm run db:generate --workspace @personal-running-coach/db",
-    "db:migrate": "npm run db:migrate --workspace @personal-running-coach/db",
-    "db:studio": "npm run db:studio --workspace @personal-running-coach/db",
+    "dev:web": "npm run dev --workspace @coachinclaw/web",
+    "dev:worker": "npm run dev --workspace @coachinclaw/worker",
+    "db:generate": "npm run db:generate --workspace @coachinclaw/db",
+    "db:migrate": "npm run db:migrate --workspace @coachinclaw/db",
+    "db:studio": "npm run db:studio --workspace @coachinclaw/db",
     "selfhost:up": "bash ./scripts/run-compose.sh up --build",
     "selfhost:down": "bash ./scripts/run-compose.sh down",
     "selfhost:logs": "bash ./scripts/run-compose.sh logs -f web worker db",

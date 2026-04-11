@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Personal Running Coach — background worker
+// Coachin'Claw — background worker
 //
 // Responsibilities:
 //   - Validate required environment variables at startup.
@@ -24,18 +24,18 @@ import {
   generatePostWorkoutDebrief,
   generateWeeklyReview,
   type WorkflowResult,
-} from "@personal-running-coach/coach-core";
+} from "@coachinclaw/coach-core";
 import {
   generateCoachingWorkflowForAthlete,
   persistOutboundCoachMessage,
-} from "@personal-running-coach/db";
+} from "@coachinclaw/db";
 import {
   createTelegramClient,
   type TelegramClient,
   validateEnv,
   workerEnvSpecs,
   requireEnvVar,
-} from "@personal-running-coach/integrations";
+} from "@coachinclaw/integrations";
 
 // ---------------------------------------------------------------------------
 // Startup env validation
@@ -191,7 +191,7 @@ if (demoMode) {
   console.log(
     JSON.stringify(
       {
-        startup: "personal-running-coach worker booted (demo mode)",
+        startup: "Coachin'Claw worker booted (demo mode)",
         note: "Set TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM_WEBHOOK_SECRET, and MODEL_PROVIDER_API_KEY to enable the real scheduler.",
         previewWorkflow: nudge.workflow,
         previewHeadline: nudge.headline,

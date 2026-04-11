@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Personal Running Coach",
+  title: "Coachin'Claw",
   description:
     "A security-first personal coach dashboard for training context, Strava imports, and proactive Telegram check-ins.",
 };

@@ -5,7 +5,7 @@ import {
   createSignedStravaOAuthState,
   createStravaOAuthNonce,
   requireEnvVar,
-} from "@personal-running-coach/integrations";
+} from "@coachinclaw/integrations";
 
 import { getServerConfig } from "@/lib/server-config";
 
