@@ -1,6 +1,6 @@
 # Coachin'Claw setup runbook
 
-This file is private scratch documentation for getting the project running for real use.
+This document provides a detailed runbook for setting up and deploying the Coachin'Claw app. It covers architecture, deployment options, environment configuration, and step-by-step instructions for both local self-hosting and cloud deployment.
 
 ## Architecture summary
 

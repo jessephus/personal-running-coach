@@ -2,13 +2,17 @@
 
 A security-first, single-user coaching app scaffold for training context, Strava imports, coach memory, and proactive Telegram nudges.
 
-## MVP focus
+## Features
 
 - Strava-first workout ingestion
 - First-party dashboard as the system of record
 - Coach memory and structured training context
 - Telegram as the first messaging surface
 - Strong privacy controls around health-adjacent data
+
+## Get Started
+
+Check out the [setup runbook](./docs/setup-runbook.md) for detailed instructions on how to get the app up and running, either locally with Docker Compose or deployed to a host or cloud provider.
 
 ## What is intentionally deferred
 
