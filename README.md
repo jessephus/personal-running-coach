@@ -12,13 +12,10 @@ A security-first, single-user coaching app scaffold for training context, Strava
 
 ## What is intentionally deferred
 
-- Garmin ingestion
-- Runna plan sync
-- Automatic plan write-back
+- Garmin or Coros data ingestion
+- Runna or TrainingPeaks plan sync and write-back
 - Multi-athlete support
 - Voice, broader wellness coaching, and commercial-grade compliance work
-
-Those deferred items are represented as structured future specs in `packages/coach-core/src/demo-data.ts`, and they can be turned into GitHub Issues automatically.
 
 ## Workspace layout
 
