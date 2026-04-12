@@ -7,6 +7,7 @@ import {
   createDatabaseConnection,
   decryptString,
   encryptString,
+  getResolvedStravaIntegrationConfig,
   rawImports,
   sha256Hex,
   sourceConnections,
@@ -26,7 +27,6 @@ import {
   isStravaTokenExpired,
   mapStravaActivityToCompletedWorkout,
   parseStravaScopes,
-  readEnvVar,
   refreshStravaAccessToken,
   requireEnvVar,
   StravaApiError,
@@ -88,8 +88,9 @@ export type ManualStravaSyncResult = {
   processedConnections: ConnectionSyncSummary[];
 };
 
-export function getStravaWebhookVerifyToken() {
-  return readEnvVar("STRAVA_WEBHOOK_VERIFY_TOKEN");
+export async function getStravaWebhookVerifyToken() {
+  const resolved = await getResolvedStravaIntegrationConfig();
+  return resolved.config?.webhookVerifyToken ?? null;
 }
 
 export async function handleStravaOAuthCallback(input: {
@@ -97,7 +98,7 @@ export async function handleStravaOAuthCallback(input: {
   scope?: string | null;
 }) {
   return withDatabase(async (db) => {
-    const env = getStravaServerEnv();
+    const env = await getStravaServerConfig(db);
     const tokenResponse = await exchangeStravaAuthorizationCode({
       clientId: env.clientId,
       clientSecret: env.clientSecret,
@@ -259,17 +260,22 @@ export async function runManualStravaSync(input: { days?: number; pageLimit?: nu
   });
 }
 
-function getStravaServerEnv() {
+async function getStravaServerConfig(db?: DatabaseClient) {
+  const resolved = await getResolvedStravaIntegrationConfig(db);
+  if (!resolved.config) {
+    throw new Error("Strava is not configured. Add it from the Tech Config page.");
+  }
+
   return {
-    clientId: requireEnvVar("STRAVA_CLIENT_ID"),
-    clientSecret: requireEnvVar("STRAVA_CLIENT_SECRET"),
+    clientId: resolved.config.clientId,
+    clientSecret: resolved.config.clientSecret,
     appEncryptionKey: requireEnvVar("APP_ENCRYPTION_KEY"),
   };
 }
 
 async function withDatabase<T>(operation: (db: DatabaseClient) => Promise<T>) {
-  getStravaServerEnv();
   requireEnvVar("DATABASE_URL");
+  requireEnvVar("APP_ENCRYPTION_KEY");
 
   const connection = createDatabaseConnection();
   try {
@@ -376,7 +382,7 @@ async function ensureActiveAccessToken(db: DatabaseClient, connection: SourceCon
     throw new Error(`Strava connection ${connection.id} is missing a refresh token.`);
   }
 
-  const env = getStravaServerEnv();
+  const env = await getStravaServerConfig(db);
   const refreshed = await refreshStravaAccessToken({
     clientId: env.clientId,
     clientSecret: env.clientSecret,

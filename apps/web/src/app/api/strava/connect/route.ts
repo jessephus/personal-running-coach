@@ -6,6 +6,7 @@ import {
   createStravaOAuthNonce,
   requireEnvVar,
 } from "@coachinclaw/integrations";
+import { getResolvedStravaIntegrationConfig } from "@coachinclaw/db";
 
 import { getServerConfig } from "@/lib/server-config";
 
@@ -13,15 +14,16 @@ const STRAVA_STATE_COOKIE = "strava_oauth_state";
 
 export const runtime = "nodejs";
 
-export function GET() {
+export async function GET() {
   const config = getServerConfig();
+  const strava = await getResolvedStravaIntegrationConfig();
 
-  if (!config.stravaClientId) {
+  if (!strava.config) {
     return NextResponse.json(
       {
-        error: "Missing STRAVA_CLIENT_ID",
+        error: "Missing Strava configuration",
         message:
-          "Set STRAVA_CLIENT_ID in your environment before trying the Strava connect flow.",
+          "Configure Strava from the Tech Config page before trying the Strava connect flow.",
       },
       { status: 400 },
     );
@@ -36,7 +38,7 @@ export function GET() {
   );
   const redirectUri = `${config.appUrl}/api/strava/callback`;
   const authorizationUrl = buildStravaAuthorizationUrl({
-    clientId: config.stravaClientId,
+    clientId: strava.config.clientId,
     redirectUri,
     state,
   });

@@ -14,6 +14,8 @@ import {
   sourceConnections,
   auditEvents,
   createDatabaseConnection,
+  getResolvedIntegrationConfigStatuses,
+  getResolvedModelProviderIntegrationConfig,
   loadAthleteRuntimeContext,
   type DatabaseConnection,
 } from "@coachinclaw/db";
@@ -21,7 +23,6 @@ import {
   createModelProviderClient,
   integrationStatusCards,
   readEnvVar,
-  requireEnvVar,
 } from "@coachinclaw/integrations";
 import { desc, eq } from "drizzle-orm";
 
@@ -30,11 +31,7 @@ import { getEnvironmentStatus } from "./server-config";
 // ---- Shared helpers --------------------------------------------------------
 
 function hasLiveConfig() {
-  return Boolean(
-    readEnvVar("DATABASE_URL") &&
-      readEnvVar("APP_ENCRYPTION_KEY") &&
-      readEnvVar("MODEL_PROVIDER_API_KEY"),
-  );
+  return Boolean(readEnvVar("DATABASE_URL") && readEnvVar("APP_ENCRYPTION_KEY"));
 }
 
 function hasDatabaseConfig() {
@@ -88,6 +85,11 @@ export async function getCoachingData() {
     const context = await loadAthleteRuntimeContext(conn.db);
     if (!context) return null;
 
+    const resolvedModelProvider = await getResolvedModelProviderIntegrationConfig(conn.db);
+    if (!resolvedModelProvider.config) {
+      return null;
+    }
+
     const stateSummary = buildAthleteStateSummary({
       profile: context.profile,
       goals: context.goals,
@@ -95,9 +97,9 @@ export async function getCoachingData() {
       recentWorkouts: context.recentWorkouts,
     });
 
-    const model = createModelProviderClient(requireEnvVar("MODEL_PROVIDER_API_KEY"), {
-      baseUrl: readEnvVar("MODEL_PROVIDER_BASE_URL") ?? undefined,
-      model: readEnvVar("MODEL_PROVIDER_MODEL") ?? undefined,
+    const model = createModelProviderClient(resolvedModelProvider.config.apiKey, {
+      baseUrl: resolvedModelProvider.config.baseUrl ?? undefined,
+      model: resolvedModelProvider.config.model ?? undefined,
     });
 
     const promises: Array<Promise<WorkflowResult | null>> = [];
@@ -237,10 +239,45 @@ export async function getCoachConfigData() {
 
 // ---- Tech Config -----------------------------------------------------------
 
-export function getTechConfigData() {
+export async function getTechConfigData() {
+  const environmentStatus = getEnvironmentStatus();
+
+  const integrationStatuses = hasDatabaseConfig()
+    ? await getResolvedIntegrationConfigStatuses()
+    : [
+        {
+          provider: "strava" as const,
+          configured: Boolean(readEnvVar("STRAVA_CLIENT_ID") && readEnvVar("STRAVA_CLIENT_SECRET")),
+          source: (readEnvVar("STRAVA_CLIENT_ID") && readEnvVar("STRAVA_CLIENT_SECRET")
+            ? "environment"
+            : "missing") as "environment" | "missing",
+        },
+        {
+          provider: "telegram" as const,
+          configured: Boolean(
+            readEnvVar("TELEGRAM_BOT_TOKEN") &&
+              readEnvVar("TELEGRAM_CHAT_ID") &&
+              readEnvVar("TELEGRAM_WEBHOOK_SECRET"),
+          ),
+          source: (readEnvVar("TELEGRAM_BOT_TOKEN") &&
+          readEnvVar("TELEGRAM_CHAT_ID") &&
+          readEnvVar("TELEGRAM_WEBHOOK_SECRET")
+            ? "environment"
+            : "missing") as "environment" | "missing",
+        },
+        {
+          provider: "model-provider" as const,
+          configured: Boolean(readEnvVar("MODEL_PROVIDER_API_KEY")),
+          source: (readEnvVar("MODEL_PROVIDER_API_KEY") ? "environment" : "missing") as
+            | "environment"
+            | "missing",
+        },
+      ];
+
   return {
-    environmentStatus: getEnvironmentStatus(),
+    environmentStatus,
     integrations: integrationStatusCards,
+    integrationStatuses,
   };
 }
 

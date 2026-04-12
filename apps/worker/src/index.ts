@@ -27,6 +27,8 @@ import {
 } from "@coachinclaw/coach-core";
 import {
   generateCoachingWorkflowForAthlete,
+  getResolvedModelProviderIntegrationConfig,
+  getResolvedTelegramIntegrationConfig,
   persistOutboundCoachMessage,
 } from "@coachinclaw/db";
 import {
@@ -34,7 +36,6 @@ import {
   type TelegramClient,
   validateEnv,
   workerEnvSpecs,
-  requireEnvVar,
 } from "@coachinclaw/integrations";
 
 // ---------------------------------------------------------------------------
@@ -149,9 +150,7 @@ async function sendCheckin(client: TelegramClient, chatId: string): Promise<void
   }
 }
 
-async function runCheckinScheduler(): Promise<void> {
-  const token = requireEnvVar("TELEGRAM_BOT_TOKEN");
-  const chatId = requireEnvVar("TELEGRAM_CHAT_ID");
+async function runCheckinScheduler(token: string, chatId: string): Promise<void> {
   const intervalHours = Math.max(
     1,
     parseInt(process.env.CHECKIN_INTERVAL_HOURS ?? "24", 10),
@@ -185,14 +184,13 @@ async function runCheckinScheduler(): Promise<void> {
 // Entry point
 // ---------------------------------------------------------------------------
 
-if (demoMode) {
-  // In demo mode, preview the coaching workflow output to confirm behavior.
+function logDemoPreview(note: string) {
   const nudge = selectDemoCoachingNudge();
   console.log(
     JSON.stringify(
       {
         startup: "Coachin'Claw worker booted (demo mode)",
-        note: "Set TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM_WEBHOOK_SECRET, and MODEL_PROVIDER_API_KEY to enable the real scheduler.",
+        note,
         previewWorkflow: nudge.workflow,
         previewHeadline: nudge.headline,
         previewTelegram: nudge.telegramMessage,
@@ -203,9 +201,32 @@ if (demoMode) {
       2,
     ),
   );
-} else {
-  runCheckinScheduler().catch((err: unknown) => {
-    console.error("[worker] fatal scheduler error:", err);
-    process.exit(1);
-  });
 }
+
+async function startWorker() {
+  if (demoMode) {
+    logDemoPreview(
+      "Set DATABASE_URL and APP_ENCRYPTION_KEY to enable the real scheduler. Integration credentials can be added from the Tech Config page.",
+    );
+    return;
+  }
+
+  const [telegram, modelProvider] = await Promise.all([
+    getResolvedTelegramIntegrationConfig(),
+    getResolvedModelProviderIntegrationConfig(),
+  ]);
+
+  if (!telegram.config || !modelProvider.config) {
+    logDemoPreview(
+      "Telegram and the LLM Model Provider must be configured from the Tech Config page before the real scheduler can run.",
+    );
+    return;
+  }
+
+  await runCheckinScheduler(telegram.config.botToken, telegram.config.chatId);
+}
+
+startWorker().catch((err: unknown) => {
+  console.error("[worker] fatal scheduler error:", err);
+  process.exit(1);
+});

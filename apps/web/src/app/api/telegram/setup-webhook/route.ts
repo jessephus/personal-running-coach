@@ -15,13 +15,21 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 import {
-  requireEnvVar,
   setupTelegramWebhook,
 } from "@coachinclaw/integrations";
+import { getResolvedTelegramIntegrationConfig } from "@coachinclaw/db";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  const botToken = requireEnvVar("TELEGRAM_BOT_TOKEN");
-  const webhookSecret = requireEnvVar("TELEGRAM_WEBHOOK_SECRET");
+  const telegram = await getResolvedTelegramIntegrationConfig();
+  if (!telegram.config) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Telegram is not configured. Add it from the Tech Config page first.",
+      },
+      { status: 400 },
+    );
+  }
 
   let body: { webhookUrl?: unknown };
   try {
@@ -37,7 +45,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   }
 
-  const result = await setupTelegramWebhook(botToken, body.webhookUrl, webhookSecret);
+  const result = await setupTelegramWebhook(
+    telegram.config.botToken,
+    body.webhookUrl,
+    telegram.config.webhookSecret,
+  );
 
   if (!result.ok) {
     console.error("[telegram/setup-webhook] registration failed:", result.error);

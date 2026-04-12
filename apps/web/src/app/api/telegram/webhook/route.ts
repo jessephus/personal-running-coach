@@ -19,13 +19,18 @@ import {
   type TelegramUpdate,
   verifyWebhookSecret,
 } from "@coachinclaw/integrations";
-import { extractMemoriesFromInboundMessage } from "@coachinclaw/db";
-
-import { requireEnvVar } from "@/lib/server-config";
+import { extractMemoriesFromInboundMessage, getResolvedTelegramIntegrationConfig } from "@coachinclaw/db";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  const webhookSecret = requireEnvVar("TELEGRAM_WEBHOOK_SECRET");
-  const allowedChatId = requireEnvVar("TELEGRAM_CHAT_ID");
+  const telegram = await getResolvedTelegramIntegrationConfig();
+  if (!telegram.config) {
+    return NextResponse.json(
+      { ok: false, error: "Telegram integration is not configured." },
+      { status: 500 },
+    );
+  }
+  const webhookSecret = telegram.config.webhookSecret;
+  const allowedChatId = telegram.config.chatId;
 
   // 1. Verify the webhook secret before touching the request body.
   const headerSecret = request.headers.get("x-telegram-bot-api-secret-token");

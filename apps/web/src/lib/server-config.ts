@@ -10,14 +10,11 @@ export { requireEnvVar, validateEnv, webEnvSpecs } from "@coachinclaw/integratio
 /** Non-secret server-side config values needed for routing and URL construction. */
 export type ServerConfig = {
   appUrl: string;
-  /** The Strava OAuth client ID. Not a secret, but only used server-side. */
-  stravaClientId: string | null;
 };
 
 export function getServerConfig(): ServerConfig {
   return {
     appUrl: readEnvVar("NEXT_PUBLIC_APP_URL") ?? "http://localhost:3000",
-    stravaClientId: readEnvVar("STRAVA_CLIENT_ID"),
   };
 }
 

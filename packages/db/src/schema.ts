@@ -61,6 +61,7 @@ export type MessageChannel = (typeof messageChannelEnum.enumValues)[number];
 export type MessageDirection = (typeof messageDirectionEnum.enumValues)[number];
 export type AuditActorType = (typeof auditActorTypeEnum.enumValues)[number];
 export type AuditOutcome = (typeof auditOutcomeEnum.enumValues)[number];
+export type IntegrationConfigProvider = "strava" | "telegram" | "model-provider";
 
 export const athleteProfiles = pgTable(
   "athlete_profiles",
@@ -270,6 +271,18 @@ export const auditEvents = pgTable(
   ],
 );
 
+export const integrationConfigs = pgTable(
+  "integration_configs",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    provider: text("provider").notNull(),
+    configCiphertext: text("config_ciphertext").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("integration_configs_provider_idx").on(table.provider)],
+);
+
 export const athleteProfilesRelations = relations(athleteProfiles, ({ many }) => ({
   goals: many(goals),
   completedWorkouts: many(completedWorkouts),
@@ -356,6 +369,7 @@ export const dbSchema = {
   sourceConnections,
   rawImports,
   auditEvents,
+  integrationConfigs,
 };
 
 export const tableCatalog: TableSpec[] = [
@@ -407,6 +421,12 @@ export const tableCatalog: TableSpec[] = [
     containsSensitiveData: false,
     mvpRequired: true,
   },
+  {
+    tableName: "integration_configs",
+    purpose: "Encrypted application-level configuration for Strava, Telegram, and the model provider set through the dashboard UI.",
+    containsSensitiveData: true,
+    mvpRequired: true,
+  },
 ];
 
 export const sensitiveFieldControls: SensitiveFieldControl[] = [
@@ -438,6 +458,10 @@ export const sensitiveFieldControls: SensitiveFieldControl[] = [
     fieldPath: "raw_imports.raw_payload_ciphertext",
     protection: "Application-layer encryption with SHA-256 integrity tracking for replay-safe processing.",
   },
+  {
+    fieldPath: "integration_configs.config_ciphertext",
+    protection: "Application-layer encryption for dashboard-managed integration credentials and provider settings.",
+  },
 ];
 
 export function getSensitiveFieldControl(fieldPath: string) {
@@ -464,3 +488,5 @@ export type RawImportRow = typeof rawImports.$inferSelect;
 export type NewRawImport = typeof rawImports.$inferInsert;
 export type AuditEventRow = typeof auditEvents.$inferSelect;
 export type NewAuditEvent = typeof auditEvents.$inferInsert;
+export type IntegrationConfigRow = typeof integrationConfigs.$inferSelect;
+export type NewIntegrationConfig = typeof integrationConfigs.$inferInsert;

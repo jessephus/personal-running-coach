@@ -9,11 +9,11 @@ import {
 
 export const runtime = "nodejs";
 
-export function GET(request: NextRequest) {
+export async function GET(request: NextRequest) {
   const mode = request.nextUrl.searchParams.get("hub.mode");
   const challenge = request.nextUrl.searchParams.get("hub.challenge");
   const verifyToken = request.nextUrl.searchParams.get("hub.verify_token");
-  const expectedToken = getStravaWebhookVerifyToken();
+  const expectedToken = await getStravaWebhookVerifyToken();
 
   if (mode !== "subscribe" || !challenge) {
     return NextResponse.json({ error: "Invalid Strava webhook challenge." }, { status: 400 });

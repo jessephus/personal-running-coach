@@ -20,12 +20,12 @@ import {
 import {
   buildMessagePreview,
   createModelProviderClient,
-  readEnvVar,
   requireEnvVar,
   type ModelProviderClient,
 } from "@coachinclaw/integrations";
 
 import { createDatabaseConnection, type DatabaseClient } from "./client";
+import { getResolvedModelProviderIntegrationConfig } from "./integration-config";
 import {
   athleteProfiles,
   auditEvents,
@@ -355,9 +355,14 @@ async function withRuntime<T>(
   operation: (input: { db: DatabaseClient; model: ModelProviderClient }) => Promise<T>,
 ): Promise<T> {
   return withDatabase(async (db) => {
-    const model = createModelProviderClient(requireEnvVar("MODEL_PROVIDER_API_KEY"), {
-      baseUrl: readEnvVar("MODEL_PROVIDER_BASE_URL") ?? undefined,
-      model: readEnvVar("MODEL_PROVIDER_MODEL") ?? undefined,
+    const resolved = await getResolvedModelProviderIntegrationConfig(db);
+    if (!resolved.config) {
+      throw new Error("Model provider is not configured. Add it from the Tech Config page.");
+    }
+
+    const model = createModelProviderClient(resolved.config.apiKey, {
+      baseUrl: resolved.config.baseUrl ?? undefined,
+      model: resolved.config.model ?? undefined,
     });
 
     return operation({ db, model });

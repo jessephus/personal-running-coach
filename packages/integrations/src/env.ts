@@ -78,69 +78,6 @@ export const webEnvSpecs: EnvVarSpec[] = [
       "Application-layer encryption key used for OAuth tokens, raw import payloads, and signed Strava state.",
     classification: "critical",
   },
-  {
-    key: "STRAVA_CLIENT_ID",
-    required: true,
-    description:
-      "Strava OAuth client ID. Needed to start the authorization flow.",
-    classification: "high",
-  },
-  {
-    key: "STRAVA_CLIENT_SECRET",
-    required: true,
-    description:
-      "Strava OAuth client secret. Exchanged server-side only; never exposed to the browser.",
-    classification: "critical",
-  },
-  {
-    key: "STRAVA_WEBHOOK_VERIFY_TOKEN",
-    required: false,
-    description:
-      "Optional Strava webhook verification token for subscription setup and inbound webhook validation.",
-    classification: "critical",
-  },
-  {
-    key: "TELEGRAM_BOT_TOKEN",
-    required: true,
-    description:
-      "Telegram bot token. High-risk credential — rotate on any suspected exposure.",
-    classification: "critical",
-  },
-  {
-    key: "TELEGRAM_CHAT_ID",
-    required: true,
-    description:
-      "Constrains the MVP to the intended athlete chat. Required for inbound message filtering.",
-    classification: "high",
-  },
-  {
-    key: "TELEGRAM_WEBHOOK_SECRET",
-    required: true,
-    description:
-      "Verifies the authenticity of inbound Telegram webhook calls.",
-    classification: "critical",
-  },
-  {
-    key: "MODEL_PROVIDER_API_KEY",
-    required: true,
-    description:
-      "API key for the frontier model provider. Used only with privacy controls; never included in prompt logs.",
-    classification: "critical",
-  },
-  {
-    key: "MODEL_PROVIDER_BASE_URL",
-    required: false,
-    description:
-      "Optional OpenAI-compatible base URL for the model provider. Defaults to the public OpenAI API.",
-    classification: "medium",
-  },
-  {
-    key: "MODEL_PROVIDER_MODEL",
-    required: false,
-    description:
-      "Optional model name used for structured coaching calls. Defaults to a small reasoning-capable model.",
-    classification: "low",
-  },
 ];
 
 /**
@@ -161,48 +98,6 @@ export const workerEnvSpecs: EnvVarSpec[] = [
     description:
       "Application-layer encryption key used when the worker reads or writes sensitive integration data.",
     classification: "critical",
-  },
-  {
-    key: "TELEGRAM_BOT_TOKEN",
-    required: true,
-    description:
-      "Telegram bot token. Required for outbound nudges and inbound webhook processing.",
-    classification: "critical",
-  },
-  {
-    key: "TELEGRAM_CHAT_ID",
-    required: true,
-    description:
-      "Constrains inbound processing to the intended athlete chat.",
-    classification: "high",
-  },
-  {
-    key: "TELEGRAM_WEBHOOK_SECRET",
-    required: true,
-    description:
-      "Verifies the authenticity of inbound Telegram webhook calls.",
-    classification: "critical",
-  },
-  {
-    key: "MODEL_PROVIDER_API_KEY",
-    required: true,
-    description:
-      "API key for the frontier model provider. Used only with privacy controls.",
-    classification: "critical",
-  },
-  {
-    key: "MODEL_PROVIDER_BASE_URL",
-    required: false,
-    description:
-      "Optional OpenAI-compatible base URL for the model provider. Defaults to the public OpenAI API.",
-    classification: "medium",
-  },
-  {
-    key: "MODEL_PROVIDER_MODEL",
-    required: false,
-    description:
-      "Optional model name used for structured coaching calls. Defaults to a small reasoning-capable model.",
-    classification: "low",
   },
 ];
 
