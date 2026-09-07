@@ -28,8 +28,9 @@
     "node": ">=22.0.0"
   },
   "overrides": {
+    "esbuild": "0.28.1",
     "@esbuild-kit/core-utils": {
-      "esbuild": "0.25.12"
+      "esbuild": "0.28.1"
     }
   },
   "devDependencies": {
